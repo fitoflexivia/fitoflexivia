@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fitoflexivia - برنامه ورزشی</title>
+
+  <!-- PWA: اضافه کردن manifest و service worker -->
+  <link rel="manifest" href="manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          console.log('Service Worker registered:', reg);
+        }).catch(err => {
+          console.log('Service Worker registration failed:', err);
+        });
+      });
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap');
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      background-image: url('https://i.ibb.co/bMG1HZ4s/9-AA95-BA0-3-E9-D-4-F12-855-D-A3-E4-A18-C2311.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      color: #fff;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      background: rgba(0, 31, 63, 0.8);
+      max-width: 620px;
+      margin: 60px auto 120px;
+      padding: 35px 40px;
+      border-radius: 20px;
+      min-height: 85vh;
+      color: #fff;
+      box-shadow: 0 0 25px 5px #ff4136aa;
+      animation: fadeInScale 0.8s ease forwards;
+    }
+
+    @keyframes fadeInScale {
+      from {opacity: 0; transform: scale(0.95);}
+      to {opacity: 1; transform: scale(1);}
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #ff4136;
+      text-shadow: 0 0 12px #0074d9;
+      font-size: 2.7rem;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 8px;
+      font-weight: 700;
+      color: #f5f5f5;
+      font-size: 1.15rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.15rem;
+      background-color: #003366;
+      color: #fff;
+      box-shadow: inset 0 0 8px #ff4136;
+      transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    input::placeholder {
+      color: #aaa;
+      font-style: italic;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      background-color: #004080;
+      box-shadow: 0 0 18px 2px #ff4136;
+      color: #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(45deg, #ff4136, #0074d9);
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0 0 25px #0074d9;
+      transition: background-position 0.4s ease, box-shadow 0.4s ease;
+      background-size: 200% 200%;
+      background-position: left center;
+      animation: pulseButton 2s infinite ease;
+      margin-bottom: 15px;
+    }
+
+    @keyframes pulseButton {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    button:hover {
+      background-position: right center;
+      box-shadow: 0 0 35px #ff4136;
+      color: #ff4136;
+    }
+
+    #bmi-result, #plan-output {
+      margin-top: 20px;
+      background-color: rgba(0, 31, 63, 0.7);
+      padding: 25px 30px;
+      border-radius: 18px;
+      line-height: 1.9;
+      color: #fff;
+      box-shadow: 0 0 20px #ff4136;
+      opacity: 0;
+      transform: translateY(20px);
+      animation-fill-mode: forwards;
+    }
+
+    #bmi-result.show, #plan-output.show {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    #plan-output h3 {
+      margin-top: 0;
+      color: #ff4136;
+      text-shadow: 0 0 10px #0074d9;
+      font-size: 1.5rem;
+    }
+
+    #plan-output ul {
+      padding-right: 15px;
+    }
+
+    #plan-output li {
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 31, 63, 0.95);
+      padding: 10px 0;
+      font-size: 11px;
+      color: #fff;
+      text-align: center;
+      z-index: 999;
+      font-weight: 600;
+      box-shadow: 0 -2px 15px #ff4136;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>برنامه ورزشی Fitoflexivia</h1>
+
+    <label for="height">قد (cm):</label>
+    <input type="number" id="height" placeholder="مثلاً 170" />
+
+    <label for="weight">وزن (kg):</label>
+    <input type="number" id="weight" placeholder="مثلاً 70" />
+
+    <label for="age">سن:</label>
+    <input type="number" id="age" placeholder="مثلاً 25" />
+
+    <label for="goal">هدف ورزشی:</label>
+    <select id="goal">
+      <option>کاهش وزن</option>
+      <option>افزایش حجم</option>
+      <option>تناسب اندام</option>
+    </select>
+
+    <label for="type">نوع تمرین:</label>
+    <select id="type">
+      <option>تمرین با دنبل</option>
+      <option>تمرین فانکشنال</option>
+      <option>تمرین TRX</option>
+    </select>
+
+    <button onclick="calculateBMI()">محاسبه BMI</button>
+    <div id="bmi-result"></div>
+
+    <button onclick="getPlan()">گرفتن برنامه هفتگی</button>
+    <div id="plan-output"></div>
+
+    <button onclick="openCoachPage()">برنامه تخصصی شما</button>
+  </div>
+
+  <footer>
+‎    این صفحه متعلق به <strong>fitoflexivia</strong> می‌باشد @2025
+  </footer>
+
+  <script>
+    function calculateBMI() {
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      if (!height || !weight || height <= 0 || weight <= 0) {
+        alert("لطفاً قد و وزن را به درستی وارد کنید.");
+        return;
+      }
+      const heightMeters = height / 100;
+      const bmi = weight / (heightMeters * heightMeters);
+      const roundedBMI = bmi.toFixed(1);
+      let status = "";
+      if (bmi < 18.5) status = "کم‌وزن";
+      else if (bmi < 25) status = "نرمال";
+      else if (bmi < 30) status = "اضافه‌وزن";
+      else status = "چاق";
+      const bmiResult = document.getElementById("bmi-result");
+      bmiResult.innerText = `BMI شما: ${roundedBMI} (${status})`;
+      bmiResult.classList.add('show');
+      document.getElementById("plan-output").classList.remove('show');
+    }
+
+    function getPlan() {
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const age = parseInt(document.getElementById("age").value);
+      const goal = document.getElementById("goal").value;
+      const type = document.getElementById("type").value;
+      let plan = [];
+
+      if (!height || !weight || !age || height <= 0 || weight <= 0 || age <= 0) {
+        alert("لطفاً قد، وزن و سن را به درستی وارد کنید.");
+        return;
+      }
+
+      if (goal === "کاهش وزن" && type === "تمرین با دنبل") {
+        plan = [
+          "شنبه: تمرین کل بدن با وزنه‌های سبک، 3 ست 15 تکرار",
+          "یکشنبه: هوازی (پیاده‌روی تند یا دویدن آهسته) 45 دقیقه",
+          "دوشنبه: تمرین بالاتنه با دنبل، حرکات کششی",
+          "سه‌شنبه: استراحت فعال (یوگا یا پیاده‌روی سبک)",
+          "چهارشنبه: تمرین پایین‌تنه با دنبل",
+          "پنجشنبه: تمرین HIIT با وزن بدن",
+          "جمعه: استراحت کامل",
+        ];
+      } else if (goal === "افزایش حجم" && type === "تمرین فانکشنال") {
+        plan = [
+          "شنبه: تمرین قدرتی با تمرکز بر اسکات و ددلیفت",
+          "یکشنبه: تمرین فانکشنال بالاتنه با وزنه متوسط",
+          "دوشنبه: استراحت",
+          "سه‌شنبه: تمرین هسته بدن (core) و پاها",
+          "چهارشنبه: تمرین فانکشنال ترکیبی کل بدن",
+          "پنجشنبه: استراحت",
+          "جمعه: تمرین بالاتنه با تکرار بالا و زمان استراحت کم",
+        ];
+      } else if (goal === "تناسب اندام" && type === "تمرین TRX") {
+        plan = [
+          "شنبه: تمرین TRX کل بدن (30 دقیقه)",
+          "یکشنبه: تمرین TRX بالاتنه + هوازی سبک",
+          "دوشنبه: تمرین تعادلی و کششی با TRX",
+          "سه‌شنبه: استراحت",
+          "چهارشنبه: TRX پایین‌تنه + پلانک و کرانچ",
+          "پنجشنبه: تمرین TRX دایره‌ای (circuit)",
+          "جمعه: یوگا یا استراحت فعال",
+        ];
+      } else {
+        plan = [
+          "شنبه: تمرین عمومی کل بدن",
+          "یکشنبه: تمرین هوازی",
+          "دوشنبه: تمرین مقاومتی",
+          "سه‌شنبه: کشش و انعطاف",
+          "چهارشنبه: تمرین پایین‌تنه",
+          "پنجشنبه: تمرین دایره‌ای",
+          "جمعه: استراحت",
+        ];
+      }
+
+      if (age < 18) {
+        plan.unshift("نکته: در سن کمتر از 18 سال، حتما با مربی قبل از شروع مشورت کنید.");
+      } else if (age > 50) {
+        plan.unshift("نکته: برای افراد بالای 50 سال، تمرینات با احتیاط و نظارت انجام شود.");
+      }
+
+      if (weight / ((height / 100) ** 2) > 30) {
+        plan.push("توصیه: تمرکز بیشتر روی تمرینات هوازی و کاهش وزن داشته باشید.");
+      }
+
+      const planOutput = document.getElementById("plan-output");
+      const planHTML = `<h3>برنامه هفتگی پیشنهادی:</h3><ul>` + plan.map(item => `<li>${item}</li>`).join("") + `</ul>`;
+      planOutput.innerHTML = planHTML;
+      planOutput.classList.add('show');
+      document.getElementById("bmi-result").classList.remove('show');
+    }
+
+    function openCoachPage() {
+      window.open("coach.html", "_blank");
+    }
+  </script>
+</body>
+</html>

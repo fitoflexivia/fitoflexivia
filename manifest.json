@@ -1,0 +1,21 @@
+{
+  "name": "Fitoflexivia App",
+  "short_name": "Fitoflexivia",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#001f3f",
+  "theme_color": "#ff4136",
+  "lang": "fa",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
