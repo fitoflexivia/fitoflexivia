@@ -1,22 +1,22 @@
-
-const CACHE_NAME = 'fitoflexivia-cache-v1';
-const urlsToCache = [
-  'index.html',
-  'coach.html',
-  'program.html',
-  'manifest.json',
-  'icon-192.png',
-  'icon-512.png'
-];
-
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+self.addEventListener("install", (e) => {
+  e.waitUntil(
+    caches.open("fitoflexivia-cache").then((cache) => {
+      return cache.addAll([
+        "./",
+        "./برنامه ورزشی-fitoflexivia.html",
+        "./برنامه تمرینی.html",
+        "./ارتباط با مربی.html",
+        "https://i.ibb.co/TMf9NFK/20250724-1909-Beach-Fitness-Branding-remix-01k0yhaqynf4xtjcbbr1k5rv0g.png",
+        "fitoflexivia-icon.png"
+      ]);
+    })
   );
 });
 
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => response || fetch(event.request))
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    caches.match(e.request).then((response) => {
+      return response || fetch(e.request);
+    })
   );
 });

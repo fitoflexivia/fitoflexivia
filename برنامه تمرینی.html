@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+ <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <title>
+   نمایش برنامه تمرینی - Fitoflexivia
+  </title>
+  <style>
+   @import url('https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap');
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      background-image: url('background-fitoflexivia.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      color: #fff;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      background: rgba(0, 31, 63, 0.9);
+      max-width: 700px;
+      margin: 60px auto 120px;
+      padding: 40px 35px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px 5px #ff4136aa;
+      color: #fff;
+      animation: fadeInScale 0.8s ease forwards;
+      text-align: center;
+    }
+
+    @keyframes fadeInScale {
+      from {opacity: 0; transform: scale(0.95);}
+      to {opacity: 1; transform: scale(1);}
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      color: #ff4136;
+      font-size: 2rem;
+      text-shadow: 0 0 10px #0074d9;
+      font-family: Tahoma, sans-serif;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 16px 60px;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(45deg, #ff4136, #0074d9);
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0 0 25px #0074d9;
+      transition: background-position 0.4s ease, box-shadow 0.4s ease;
+      background-size: 200% 200%;
+      background-position: left center;
+      animation: pulseButton 2s infinite ease;
+    }
+
+    @keyframes pulseButton {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    button:hover {
+      background-position: right center;
+      box-shadow: 0 0 35px #ff4136;
+      color: #ff4136;
+    }
+
+    #programDisplay {
+      margin-top: 30px;
+      background: rgba(0,31,63,0.7);
+      padding: 25px 30px;
+      border-radius: 18px;
+      color: #fff;
+      box-shadow: 0 0 20px #ff4136;
+      line-height: 1.7;
+      font-size: 1.1rem;
+      white-space: pre-wrap;
+      min-height: 150px;
+      display: none;
+      text-align: right;
+    }
+
+    form {
+      margin-top: 40px;
+      text-align: right;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border-radius: 14px;
+      border: none;
+      background-color: #003366;
+      color: #fff;
+      font-size: 1.1rem;
+      box-shadow: inset 0 0 10px #ff4136;
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      background-color: #004080;
+      box-shadow: 0 0 20px 3px #ff4136;
+      color: #fff;
+    }
+
+    #submitBtn {
+      width: 100%;
+      padding: 16px;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(45deg, #ff4136, #0074d9);
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0 0 25px #0074d9;
+      transition: background-position 0.4s ease, box-shadow 0.4s ease;
+      background-size: 200% 200%;
+      background-position: left center;
+      animation: pulseButton 2s infinite ease;
+    }
+
+    #submitBtn:hover {
+      background-position: right center;
+      box-shadow: 0 0 35px #ff4136;
+      color: #ff4136;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      min-height: 24px; /* برای جلوگیری از جابه‌جایی ناگهانی */
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 31, 63, 0.95);
+      padding: 8px 10px;
+      font-size: 11px;
+      color: #fff;
+      text-align: center;
+      z-index: 999;
+      font-weight: 500;
+      box-shadow: 0 -2px 15px #ff4136;
+      letter-spacing: 0.5px;
+      direction: rtl;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px 20px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      button, #submitBtn {
+        padding: 12px 30px;
+        font-size: 1rem;
+      }
+
+      input, textarea {
+        font-size: 1rem;
+      }
+
+      footer {
+        font-size: 10px;
+        padding: 6px 8px;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="container">
+   <h2>
+    برنامه تمرینی شما
+   </h2>
+   <button onclick="showProgram()">
+    نمایش برنامه
+   </button>
+   <div id="programDisplay">
+   </div>
+   <form id="questionForm">
+    <h3>
+     سوالات یا درخواست&zwnj;های خود را اینجا بنویسید:
+    </h3>
+    <label for="userName">
+     نام شما:
+    </label>
+    <input id="userName" name="userName" placeholder="نام خود را وارد کنید" required type="text">
+    <label for="userEmail">
+     ایمیل شما:
+    </label>
+    <input id="userEmail" name="userEmail" placeholder="ایمیل خود را وارد کنید" required type="email">
+    <label for="userQuestion">
+     سوال یا درخواست شما:
+    </label>
+    <textarea id="userQuestion" name="userQuestion" placeholder="متن سوال یا درخواست را وارد کنید..." required></textarea>
+    <button id="submitBtn" type="submit">
+     ارسال سوال
+    </button>
+    <div id="message">
+    </div>
+   </form>
+  </div>
+  <footer>
+   &copy; 2025 Fitoflexivia
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js">
+  </script>
+  <script>
+   (function () {
+      emailjs.init('edGLAlh38TlLP0LWi');
+    })();
+
+    // تعریف برنامه‌های تمرینی مختلف بر اساس نوع
+    const programTypes = {
+      weekly: `شنبه: تمرین کل بدن با وزنه‌های سبک، 3 ست 15 تکرار
+‎یکشنبه: هوازی (پیاده‌روی تند یا دویدن آهسته) 45 دقیقه
+‎دوشنبه: تمرین بالاتنه با دنبل، حرکات کششی
+‎سه‌شنبه: استراحت فعال (یوگا یا پیاده‌روی سبک)
+‎چهارشنبه: تمرین پایین‌تنه با دنبل
+‎پنجشنبه: تمرین HIIT با وزن بدن
+‎جمعه: استراحت کامل`,
+
+      monthly: `هفته اول تا چهارم:
+هر هفته 3 روز تمرین کل بدن (شنبه، دوشنبه، چهارشنبه)
+هر هفته 2 روز تمرین هوازی (یکشنبه و پنجشنبه)
+جمعه و سه‌شنبه استراحت کامل
+هدف: افزایش استقامت و تقویت عضلات به صورت تدریجی.`,
+
+      quarterly: `ماه اول: تمرینات پایه و استقامت
+ماه دوم: افزایش شدت و حجم تمرینات قدرتی
+ماه سوم: تمرینات تخصصی برای هدف‌گذاری‌های فردی (کاهش وزن، افزایش حجم عضلانی)
+برنامه شامل ترکیب تمرینات هوازی و مقاومتی با استراحت‌های مناسب است.`
+    };
+
+    // مدت اعتبار برنامه‌ها به روز
+    const typeDurations = {
+      weekly: 7,
+      monthly: 30,
+      quarterly: 90
+    };
+
+    const displayDiv = document.getElementById("programDisplay");
+
+    // تابع کمکی برای نمایش محتوا در برنامه تمرینی
+    function renderProgram(content) {
+      displayDiv.textContent = content;
+      displayDiv.style.display = "block";
+    }
+
+    // تابع نمایش برنامه تمرینی با اعتبارسنجی نوع و مدت اعتبار
+    function showProgram() {
+      const now = new Date().getTime();
+      const urlParams = new URLSearchParams(window.location.search);
+      const type = urlParams.get("type");
+
+      // اعتبارسنجی نوع برنامه
+      if (!type || !programTypes[type]) {
+        displayDiv.innerHTML = "<b style='color:yellow'>نوع برنامه مشخص یا معتبر نیست. لطفاً از لینک معتبر استفاده کنید (مثلاً ?type=weekly).</b>";
+        displayDiv.style.display = "block";
+        return;
+      }
+
+      // ذخیره اطلاعات زمان و نوع برنامه در localStorage
+      localStorage.setItem("program_expiry_info", JSON.stringify({ type: type, start: now }));
+
+      // نمایش برنامه مربوط به نوع انتخاب شده
+      renderProgram(programTypes[type]);
+    }
+
+    // هنگام بارگذاری صفحه: بررسی اعتبار برنامه و نمایش خودکار در صورت معتبر بودن
+    window.addEventListener("DOMContentLoaded", function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const programType = urlParams.get("type");
+
+      if (!programType || !programTypes[programType]) {
+        // اگر نوع برنامه موجود نبود یا نامعتبر بود، هیچ کاری انجام نده
+        return;
+      }
+
+      const now = new Date().getTime();
+      const saved = JSON.parse(localStorage.getItem("program_expiry_info") || "{}");
+
+      if (!saved.type || !saved.start || saved.type !== programType) {
+        // اگر اطلاعات ذخیره شده نبود یا نوع متفاوت بود، هیچ کاری انجام نده
+        return;
+      }
+
+      const diffDays = (now - saved.start) / (1000 * 60 * 60 * 24);
+      const allowedDays = typeDurations[programType];
+
+      if (diffDays <= allowedDays) {
+        renderProgram(programTypes[programType]);
+      } else {
+        displayDiv.innerHTML = "<b style='color:red'>مهلت مشاهده برنامه به پایان رسیده است.</b>";
+        displayDiv.style.display = "block";
+      }
+    });
+
+    // مدیریت فرم ارسال سوالات با اعتبارسنجی و ارسال ایمیل با emailjs
+    const form = document.getElementById('questionForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const userName = form.userName.value.trim();
+      const userEmail = form.userEmail.value.trim();
+      const userQuestion = form.userQuestion.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!userName || !userEmail || !userQuestion) {
+        messageDiv.style.color = 'red';
+        messageDiv.textContent = 'لطفاً همه فیلدها را پر کنید.';
+        return;
+      }
+
+      if (!emailRegex.test(userEmail)) {
+        messageDiv.style.color = 'red';
+        messageDiv.textContent = 'ایمیل وارد شده معتبر نیست.';
+        return;
+      }
+
+      emailjs.send('service_vfhjgup', 'template_32a08rq', {
+        user_name: userName,
+        user_email: userEmail,
+        user_question: userQuestion
+      })
+      .then(function () {
+        messageDiv.style.color = 'lightgreen';
+        messageDiv.textContent = 'سوال شما با موفقیت ارسال شد. متشکریم!';
+        form.reset();
+      }, function (error) {
+        messageDiv.style.color = 'red';
+        messageDiv.textContent = 'ارسال با خطا مواجه شد. لطفاً دوباره تلاش کنید.';
+        console.error('FAILED...', error);
+      });
+    });
+  </script>
+ </body>
+</html>
