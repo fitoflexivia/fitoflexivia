@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+ <head>
+  <meta charset="utf-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <!-- برای سازگاری با IE -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <title>
+   Fitoflexivia - برنامه ورزشی
+  </title>
+  <!-- آیکون سایت -->
+  <link href="https://i.ibb.co/BfHzDz5/fitoflexivia-icon.png" rel="icon" type="image/png">
+  <!-- manifest و service worker برای PWA -->
+  <link href="manifest.json" rel="manifest">
+  <script>
+   if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker registered:', reg))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
+  </script>
+  <style>
+   @import url('https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap');
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      background-image: url('background-fitoflexivia.png');
+      background-size: cover;
+      background-attachment: fixed;
+      color: #fff;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+    .container {
+      background: rgba(0,31,63,0.8);
+      max-width: 620px;
+      margin: 60px auto 120px;
+      padding: 35px 40px;
+      border-radius: 20px;
+      min-height: 85vh;
+      box-shadow: 0 0 25px 5px #ff4136aa;
+      animation: fadeInScale 0.8s ease forwards;
+      position: relative;
+    }
+    @keyframes fadeInScale { from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);} }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #0074d9;
+      font-size: 2.7rem;
+      font-weight: 900;
+      text-shadow: 0 0 8px #0074d9;
+      animation: titlePulse 2.5s ease-in-out infinite alternate;
+      user-select: none;
+    }
+    @keyframes titlePulse {
+      0%{text-shadow:0 0 8px #0074d9;color:#0074d9;transform:scale(1);}
+      50%{text-shadow:0 0 20px #ff4136,0 0 30px #ff4136;color:#ff4136;transform:scale(1.05);}
+      100%{text-shadow:0 0 8px #0074d9;color:#0074d9;transform:scale(1);}
+    }
+    label { display: block; margin:14px 0 8px; font-weight:700; color:#f5f5f5; font-size:1.15rem; }
+    input, select {
+      width:100%; padding:14px 16px; margin-bottom:20px;
+      border:none; border-radius:14px; font-size:1.15rem;
+      background-color:#003366; color:#fff;
+      box-shadow: inset 0 0 8px #ff4136;
+      transition: background-color .4s, box-shadow .4s;
+      appearance:none;
+    }
+    select {
+      background-image:url("data:image/svg+xml;charset=US-ASCII,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white'%3e%3cpolygon points='0,0 16,0 8,8'/%3e%3c/svg%3e");
+      background-repeat:no-repeat;
+      background-position:right 15px center;
+      background-size:12px;
+      padding-right:40px;
+      cursor:pointer;
+    }
+    input::placeholder { color:#aaa; font-style:italic; }
+    input:focus, select:focus {
+      outline:none;
+      background-color:#004080;
+      box-shadow:0 0 18px 2px #ff4136;
+      color:#fff;
+    }
+    button {
+      width:100%; padding:16px;
+      font-size:1.3rem; font-weight:800; color:#fff;
+      background:linear-gradient(45deg,#ff4136,#0074d9);
+      border:none; border-radius:18px; cursor:pointer;
+      box-shadow:0 0 25px #0074d9;
+      transition:background-position .4s, box-shadow .4s, color .4s;
+      background-size:200% 200%; background-position:left center;
+      animation:pulseButton 2s infinite ease;
+      margin-bottom:15px;
+      user-select:none;
+    }
+    @keyframes pulseButton {0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
+    button:hover, button:focus {
+      background-position:right center;
+      box-shadow:0 0 35px #ff4136;
+      color:#ff4136;
+      outline:none;
+    }
+    #bmi-result, #plan-output {
+      margin-top:20px; background:rgba(0,31,63,0.7);
+      padding:25px 30px; border-radius:18px;
+      line-height:1.9; color:#fff;
+      box-shadow:0 0 20px #ff4136;
+      opacity:0; transform:translateY(20px);
+      animation-fill-mode:forwards;
+      max-height:100vh; overflow-y:auto;
+      font-size:1.1rem; display:none;
+    }
+    #bmi-result.show, #plan-output.show {
+      animation:fadeInUp .6s ease forwards;
+      opacity:1; transform:translateY(0);
+      display:block;
+    }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+    footer {
+      position:fixed; bottom:0; width:100%;
+      background:rgba(0,31,63,0.95); padding:10px 0;
+      font-size:11px; color:#fff; text-align:center;
+      z-index:999; font-weight:600;
+      box-shadow:0 -2px 15px #ff4136;
+      letter-spacing:1px; user-select:none;
+    }
+    #bmi-table {
+      margin:20px auto 0; border-collapse:collapse;
+      width:100%; max-width:620px;
+      color:#fff; box-shadow:0 0 20px #ff4136;
+      background:rgba(0,31,63,0.85);
+      border-radius:12px; overflow:hidden;
+      font-size:1rem; display:none;
+    }
+    #bmi-table th, #bmi-table td {
+      padding:12px 15px; border:1px solid #ff4136; text-align:center;
+    }
+    #bmi-table th { background-color:#0074d9; font-weight:700; }
+    #bmi-table tbody tr:nth-child(even) { background-color:rgba(255,65,54,0.15); }
+    .sr-only {
+      position:absolute !important; width:1px !important;
+      height:1px !important; padding:0 !important; margin:-1px !important;
+      overflow:hidden !important; clip:rect(0,0,0,0) !important; border:0 !important;
+    }
+  </style>
+ </head>
+ <body>
+  <div aria-label="برنامه ورزشی Fitoflexivia" class="container" role="main">
+   <h1>
+    Fitoflexivia
+   </h1>
+   <label for="height">
+    قد (cm):
+   </label>
+   <input aria-describedby="height-desc" id="height" max="300" min="50" placeholder="مثلاً 170" required step="1" type="number">
+   <span class="sr-only" id="height-desc">
+    قد خود را به سانتی&zwnj;متر وارد کنید.
+   </span>
+   <label for="weight">
+    وزن (kg):
+   </label>
+   <input aria-describedby="weight-desc" id="weight" max="300" min="20" placeholder="مثلاً 70" required step="0.1" type="number">
+   <span class="sr-only" id="weight-desc">
+    وزن خود را به کیلوگرم وارد کنید.
+   </span>
+   <label for="age">
+    سن:
+   </label>
+   <input aria-describedby="age-desc" id="age" max="90" min="10" placeholder="مثلاً 25" required step="1" type="number">
+   <span class="sr-only" id="age-desc">
+    سن خود را به سال وارد کنید.
+   </span>
+   <label for="goal">
+    هدف ورزشی:
+   </label>
+   <select aria-describedby="goal-desc" id="goal" required>
+    <option disabled selected value>
+     انتخاب هدف
+    </option>
+    <option value="کاهش وزن">
+     کاهش وزن
+    </option>
+    <option value="افزایش حجم">
+     افزایش حجم
+    </option>
+    <option value="تناسب اندام">
+     تناسب اندام
+    </option>
+   </select>
+   <span class="sr-only" id="goal-desc">
+    هدف ورزشی خود را انتخاب کنید.
+   </span>
+   <label for="type">
+    نوع تمرین:
+   </label>
+   <select aria-describedby="type-desc" id="type" required>
+    <option disabled selected value>
+     انتخاب نوع تمرین
+    </option>
+    <option value="تمرین با دمبل">
+     تمرین با دمبل
+    </option>
+    <option value="تمرین فانکشنال">
+     تمرین فانکشنال
+    </option>
+    <option value="تمرین TRX">
+     تمرین TRX
+    </option>
+   </select>
+   <span class="sr-only" id="type-desc">
+    نوع تمرین خود را انتخاب کنید.
+   </span>
+   <button id="calculate-btn">
+    محاسبه BMI
+   </button>
+   <button id="get-plan-btn">
+    برنامه ورزشی
+   </button>
+   <button id="coach-btn">
+    برنامه تخصص شما
+   </button>
+   <button id="reset-btn">
+    بازگشت
+   </button>
+   <div aria-atomic="true" aria-live="polite" id="bmi-result" role="region">
+   </div>
+   <table aria-label="جدول BMI" id="bmi-table">
+    <thead>
+     <tr>
+      <th>
+       رده
+      </th>
+      <th>
+       محدوده BMI
+      </th>
+      <th>
+       توضیح
+      </th>
+      <th>
+       اضافه وزن (kg)
+      </th>
+     </tr>
+    </thead>
+    <tbody>
+     <tr>
+      <td>
+       کمبود وزن
+      </td>
+      <td>
+       &lt;18.5
+      </td>
+      <td>
+       نیاز به افزایش وزن
+      </td>
+      <td>
+       0
+      </td>
+     </tr>
+     <tr>
+      <td>
+       وزن نرمال
+      </td>
+      <td>
+       18.5&ndash;24.9
+      </td>
+      <td>
+       وزن سالم
+      </td>
+      <td>
+       0
+      </td>
+     </tr>
+     <tr>
+      <td>
+       اضافه وزن
+      </td>
+      <td>
+       25&ndash;29.9
+      </td>
+      <td>
+       کاهش وزن توصیه می&zwnj;شود
+      </td>
+      <td class="overweight">
+       &mdash;
+      </td>
+     </tr>
+     <tr>
+      <td>
+       چاقی
+      </td>
+      <td>
+       &ge;30
+      </td>
+      <td>
+       کاهش وزن ضروری است
+      </td>
+      <td class="overweight">
+       &mdash;
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <div aria-atomic="true" aria-live="polite" id="plan-output" role="region">
+   </div>
+  </div>
+  <footer>
+   &copy; 2025 Fitoflexivia
+  </footer>
+  <script>
+   const heightInput = document.getElementById('height');
+    const weightInput = document.getElementById('weight');
+    const ageInput = document.getElementById('age');
+    const goalSelect = document.getElementById('goal');
+    const typeSelect = document.getElementById('type');
+
+    const bmiResult = document.getElementById('bmi-result');
+    const bmiTable = document.getElementById('bmi-table');
+    const planOutput = document.getElementById('plan-output');
+
+    const btnCalc = document.getElementById('calculate-btn');
+    const btnPlan = document.getElementById('get-plan-btn');
+    const btnCoach = document.getElementById('coach-btn');
+    const btnReset = document.getElementById('reset-btn');
+
+    function calculateBMI() {
+      const h = parseFloat(heightInput.value);
+      const w = parseFloat(weightInput.value);
+
+      if (isNaN(h) || isNaN(w) || h <= 0 || w <= 0) {
+        alert('لطفاً قد و وزن معتبر وارد کنید.');
+        return null;
+      }
+      return w / ((h/100)**2);
+    }
+
+    function getCategoryAndOverweight(bmi, w, h) {
+      const h2 = (h/100)**2;
+      if (bmi < 18.5) return {cat: 'کمبود وزن', over: 0};
+      if (bmi < 25) return {cat: 'وزن نرمال', over: 0};
+      if (bmi < 30) {
+        const idealMax = 24.9 * h2;
+        return {cat: 'اضافه وزن', over: Math.max((w - idealMax), 0)};
+      }
+      const ideal = 24.9 * h2;
+      return {cat: 'چاقی', over: Math.max((w - ideal),0)};
+    }
+
+    btnCalc.addEventListener('click', () => {
+      const bmi = calculateBMI();
+      if (bmi === null) return;
+
+      const h = parseFloat(heightInput.value);
+      const w = parseFloat(weightInput.value);
+      const r = getCategoryAndOverweight(bmi, w, h);
+
+      const bmiFixed = bmi.toFixed(1);
+      const overFixed = r.over.toFixed(1);
+
+      bmiResult.innerHTML = `
+        <p><strong>BMI شما:</strong> ${bmiFixed}</p>
+        <p><strong>رده وزنی:</strong> ${r.cat}</p>
+        ${r.over>0 ? `<p><strong>اضافه وزن تقریبی:</strong> ${overFixed} کیلوگرم</p>` : ''}
+      `;
+      bmiResult.classList.add('show');
+      bmiTable.style.display = 'table';
+
+      // مقدار اضافه وزن را در جدول قرار می‌دهیم
+      const rows = bmiTable.querySelectorAll('tbody tr');
+      rows.forEach(row => row.querySelector('.overweight') && (row.querySelector('.overweight').textContent = '—'));
+      if (r.over > 0) {
+        const idx = (r.cat === 'اضافه وزن' ? 2 : 3);
+        rows[idx].querySelector('.overweight').textContent = overFixed;
+      }
+
+      planOutput.classList.remove('show');
+    });
+
+    btnPlan.addEventListener('click', () => {
+      const age = parseInt(ageInput.value);
+      const goal = goalSelect.value;
+      const type = typeSelect.value;
+      if (isNaN(age) || !goal || !type) {
+        alert('لطفاً سن، هدف و نوع تمرین را وارد کنید.');
+        return;
+      }
+
+      let planList = [];
+      if (goal === 'کاهش وزن') {
+        planList = [
+          'روز 1: تمرین هوازی 30 دقیقه',
+          'روز 2: تمرین با دمبل (کل بدن)',
+          'روز 3: استراحت فعال (یوگا و کشش)',
+          'روز 4: تمرین فانکشنال با شدت متوسط',
+          'روز 5: تمرین هوازی 40 دقیقه',
+          'روز 6: تمرین TRX',
+          'روز 7: استراحت'
+        ];
+      } else if (goal==='افزایش حجم') {
+        planList = [
+          'روز 1: تمرین با دمبل (بالا تنه)',
+          'روز 2: تمرین با دمبل (پایین تنه)',
+          'روز 3: استراحت فعال',
+          'روز 4: تمرین TRX قدرتی',
+          'روز 5: تمرین با دمبل (افزایش حجم)',
+          'روز 6: فانکشنال',
+          'روز 7: استراحت'
+        ];
+      } else {
+        planList = [
+          'روز 1: فانکشنال',
+          'روز 2: هوازی 30 دقیقه',
+          'روز 3: TRX',
+          'روز 4: استراحت فعال',
+          'روز 5: تمرین با دمبل',
+          'روز 6: هوازی 45 دقیقه',
+          'روز 7: استراحت'
+        ];
+      }
+
+      planList = planList.map(item => {
+        if (type.includes('دمبل')) return item + ' (استفاده از دمبل)';
+        if (type.includes('فانکشنال')) return item + ' (حرکات عملکردی)';
+        if (type.includes('TRX')) return item + ' (استفاده از بند TRX)';
+        return item;
+      });
+
+      planOutput.innerHTML = `<h3>برنامه پیشنهادی:</h3><ul>${planList.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+      planOutput.classList.add('show');
+    });
+
+    btnCoach.addEventListener('click', () => {
+      window.location.href = 'contact-coach.html';
+    });
+
+    btnReset.addEventListener('click', () => {
+      [heightInput, weightInput, ageInput].forEach(i=>i.value='');
+      [goalSelect,typeSelect].forEach(s=>s.value='');
+      bmiResult.innerHTML = ''; bmiResult.classList.remove('show');
+      bmiTable.style.display = 'none';
+      planOutput.innerHTML=''; planOutput.classList.remove('show');
+    });
+  </script>
+ </body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+ <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <title>
+   ارتباط با مربی - Fitoflexivia
+  </title>
+  <!-- اضافه کردن قابلیت PWA -->
+  <link href="manifest.json" rel="manifest">
+  <script>
+   if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker Registered:', reg))
+          .catch(err => console.log('Service Worker Failed:', err));
+      });
+    }
+  </script>
+  <style>
+   @import url('https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap');
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      background-image: url('background-fitoflexivia.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      color: #fff;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      background: rgba(0, 31, 63, 0.9);
+      max-width: 600px;
+      margin: 60px auto 120px;
+      padding: 40px 35px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px 5px #ff4136aa;
+      color: #fff;
+      animation: scaleIn 0.8s ease forwards;
+    }
+
+    @keyframes scaleIn {
+      from { transform: scale(0.95); }
+      to { transform: scale(1); }
+    }
+
+    /* انیمیشن عنوان h2 */
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ff4136;
+      font-size: 2rem;
+      text-shadow: 0 0 20px #ff4136;
+      animation: pulseAndScale 2.4s infinite alternate ease-in-out;
+      /* اضافه کردن حالت پیش‌فرض transform برای هماهنگی با انیمیشن */
+      transform-origin: center center;
+    }
+
+    @keyframes pulseAndScale {
+      0% {
+        color: #ff4136;
+        text-shadow: 0 0 15px #ff4136;
+        transform: scale(1);
+      }
+      50% {
+        color: #ff6347;
+        text-shadow: 0 0 40px #ff6347;
+        transform: scale(1.12);
+      }
+      100% {
+        color: #ff4136;
+        text-shadow: 0 0 15px #ff4136;
+        transform: scale(1);
+      }
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    select, textarea, input[type="file"], button {
+      width: 100%;
+      padding: 14px 16px;
+      margin-bottom: 25px;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.15rem;
+      box-shadow: inset 0 0 8px #ff4136;
+      background-color: #003366;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    select:focus, textarea:focus, input[type="file"]:focus, button:focus {
+      outline: none;
+      background-color: #004080;
+      box-shadow: 0 0 18px 2px #ff4136;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #ff4136;
+      box-shadow: 0 0 25px #ff4136;
+      color: #fff;
+    }
+
+    button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+      box-shadow: none;
+      color: #ccc;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+    }
+
+    #response {
+      background: rgba(0, 31, 63, 0.8);
+      padding: 25px 30px;
+      border-radius: 18px;
+      color: #fff;
+      box-shadow: 0 0 20px #ff4136;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      min-height: 80px;
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      user-select: text;
+    }
+
+    #response.show {
+      opacity: 1;
+    }
+
+    #payment-info {
+      background: rgba(0, 31, 63, 0.8);
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+      box-shadow: 0 0 15px #ff4136;
+      color: #ffddcc;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 31, 63, 0.95);
+      padding: 10px 0;
+      font-size: 11px;
+      color: #fff;
+      text-align: center;
+      z-index: 999;
+      font-weight: 600;
+      box-shadow: 0 -2px 15px #ff4136;
+      letter-spacing: 1px;
+      user-select: none;
+    }
+  </style>
+ </head>
+ <body>
+  <div aria-label="فرم ارتباط با مربی" class="container" role="main">
+   <h2>
+    ارتباط با مربی
+   </h2>
+   <label for="programDuration">
+    نوع برنامه تمرینی را انتخاب کنید:
+   </label>
+   <select aria-describedby="payment-info" aria-required="true" id="programDuration" onchange="showPaymentInfo()">
+    <option value>
+     انتخاب کنید
+    </option>
+    <option value="weekly">
+     برنامه هفتگی
+    </option>
+    <option value="monthly">
+     برنامه ماهانه
+    </option>
+    <option value="quarterly">
+     برنامه سه ماهه
+    </option>
+   </select>
+   <div aria-live="polite" id="payment-info" style="display:none;">
+   </div>
+   <label for="paymentSlip">
+    ارسال عکس فیش واریزی:
+   </label>
+   <input accept="image/jpeg,image/png" aria-describedby="paymentHelp" aria-required="true" id="paymentSlip" type="file">
+   <small id="paymentHelp" style="color:#ffbaba; font-size: 0.9rem; display:block; margin-bottom:15px;">
+    فقط فرمت&zwnj;های عکس مانند JPG، PNG مجاز هستند.
+   </small>
+   <label for="extraNotes">
+    توضیحات تکمیلی (اختیاری):
+   </label>
+   <textarea aria-multiline="true" id="extraNotes" placeholder="هر نکته&zwnj;ای که می&zwnj;خواهید به مربی بگویید..."></textarea>
+   <button aria-label="ارسال درخواست برنامه" id="submitBtn" onclick="sendRequest()">
+    ارسال درخواست برنامه
+   </button>
+   <div aria-live="assertive" id="response" role="alert">
+   </div>
+  </div>
+  <footer>
+   &copy; 2025 Fitoflexivia
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js">
+  </script>
+  <script>
+   (function(){
+      emailjs.init('edGLAlh38TlLP0LWi');
+    })();
+
+    function showPaymentInfo() {
+      const duration = document.getElementById("programDuration").value;
+      const paymentDiv = document.getElementById("payment-info");
+      let text = "";
+      const cardNumber = `<span style="direction:ltr; unicode-bidi:bidi-override;">۶۰۳۷-۹۹۷۲-۲۷۰۸-۰۳۴۹</span>`;
+
+      switch(duration) {
+        case "weekly":
+          text = `<b>هفتگی:</b> ۳۰۰ هزار تومان<br>شماره کارت: ${cardNumber}`;
+          break;
+        case "monthly":
+          text = `<b>ماهانه:</b> ۱/۰۰۰/۰۰۰ تومان<br>شماره کارت: ${cardNumber}`;
+          break;
+        case "quarterly":
+          text = `<b>سه ماهه:</b> ۲/۵۰۰/۰۰۰ تومان<br>شماره کارت: ${cardNumber}`;
+          break;
+        default:
+          text = "";
+      }
+
+      if(text) {
+        paymentDiv.innerHTML = text;
+        paymentDiv.style.display = "block";
+      } else {
+        paymentDiv.style.display = "none";
+      }
+    }
+
+    async function sendRequest() {
+      const submitBtn = document.getElementById("submitBtn");
+      const duration = document.getElementById("programDuration").value;
+      const paymentSlipInput = document.getElementById("paymentSlip");
+      const extraNotes = document.getElementById("extraNotes").value.trim();
+      const responseDiv = document.getElementById("response");
+
+      // پاک کردن پیام قبلی
+      responseDiv.classList.remove("show");
+      responseDiv.innerText = "";
+
+      if(!duration) {
+        alert("لطفاً نوع برنامه تمرینی را انتخاب کنید.");
+        return;
+      }
+
+      if(paymentSlipInput.files.length === 0) {
+        alert("لطفاً عکس فیش واریزی را انتخاب کنید.");
+        return;
+      }
+
+      // بررسی فرمت فایل (تصویر)
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      const file = paymentSlipInput.files[0];
+      if(!allowedTypes.includes(file.type)) {
+        alert("فرمت فایل مجاز نیست. لطفاً یک تصویر با فرمت JPG یا PNG انتخاب کنید.");
+        return;
+      }
+
+      try {
+        // فعال کردن لودینگ
+        submitBtn.disabled = true;
+        submitBtn.textContent = "در حال ارسال...";
+
+        const base64Image = await compressAndConvertToBase64(file);
+
+        await emailjs.send('service_vfhjgup', 'template_hkzfg54', {
+          duration: duration,
+          extraNotes: extraNotes,
+          paymentSlipBase64: base64Image
+        });
+
+        responseDiv.innerText = "درخواست شما با موفقیت ارسال شد و پس از بررسی فیش، لینک برنامه برایتان ارسال می‌شود.";
+        responseDiv.classList.add("show");
+
+        // پاک کردن فرم
+        document.getElementById("programDuration").value = "";
+        paymentSlipInput.value = "";
+        document.getElementById("extraNotes").value = "";
+        document.getElementById("payment-info").style.display = "none";
+
+      } catch (error) {
+        responseDiv.innerText = "خطا در ارسال: لطفاً مجدداً تلاش کنید.";
+        responseDiv.classList.add("show");
+        console.error("EmailJS Error:", error);
+      } finally {
+        // بازگرداندن دکمه به حالت اولیه
+        submitBtn.disabled = false;
+        submitBtn.textContent = "ارسال درخواست برنامه";
+
+        // حذف پیام بعد از 6 ثانیه
+        setTimeout(() => {
+          responseDiv.classList.remove("show");
+          responseDiv.innerText = "";
+        }, 6000);
+      }
+    }
+
+    function compressAndConvertToBase64(file, maxWidth = 400) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const scaleSize = maxWidth / img.width;
+            canvas.width = maxWidth;
+            canvas.height = img.height * scaleSize;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const newBase64 = canvas.toDataURL('image/jpeg', 0.6);
+            resolve(newBase64);
+          };
+          img.onerror = reject;
+          img.src = event.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+  </script>
+  <a href="برنامه ورزشی-fitoflexivia.html" style="display:block;text-align:center;margin-top:25px;font-weight:800;color:#ffddcc;text-decoration:underline;">
+   ورود به برنامه تخصصی شما
+  </a>
+ </body>
+</html>
